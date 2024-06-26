@@ -1,11 +1,14 @@
 package com.example.demo.auth;
 
 
+import com.example.demo.email.EmailService;
+import com.example.demo.email.EmailTemplate;
 import com.example.demo.role.RoleRepo;
 import com.example.demo.user.Token;
 import com.example.demo.user.TokenRepo;
 import com.example.demo.user.User;
 import com.example.demo.user.UserRepo;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,11 +24,11 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private  final UserRepo userRepo;
     private final TokenRepo tokenRepo;
+    private  final EmailService emailService;
+    private String activationUrl="http://localhost:4200/activate-account";
 
 
-
-
-    public void register(RegisterRequest request) {
+    public void register(RegisterRequest request) throws MessagingException {
         var userRole= roleRepo.findByName("USER")
                 //todo-exception handling
                 .orElseThrow(()->new IllegalStateException("Role User was not initialized"));
@@ -43,9 +46,18 @@ public class AuthService {
         sendValidationEmail(user);
     }
 
-    private void sendValidationEmail(User user) {
+    private void sendValidationEmail(User user) throws MessagingException {
         var newToken=generateAndSaveActivationToken(user);
         //send email
+
+        emailService.sendEmail(
+                user.getEmail(),
+                user.fullName(),
+                EmailTemplate.ACTIVATE_ACCOUNT,
+                activationUrl,
+                newToken,
+                "Account activation"
+        );
         
     }
 
