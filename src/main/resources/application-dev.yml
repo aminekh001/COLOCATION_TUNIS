@@ -11,20 +11,16 @@ spring:
       ddl-auto: update
     show-sql: true
   mail:
-    host: localhost
-    port: 1025
-    username: amine
-    password: amine
-    properties:
-      mail:
-        smtp:
-          trust: "*"
-        auth: true
-        starttls:
-          enabled: true
-        connectiontimeout: 5000
-        timeout: 3000
-        writetimeout: 5000
+    host: smtp.gmail.com
+    port: 587
+    username: amine.khairi88@gmail.com
+    password: gsjz biby dzlu mgaf
+    protocol: smtp
+    tls: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com
 
 server:
   port: 9090
